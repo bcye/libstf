@@ -48,7 +48,7 @@ generate if (REGISTER) begin
         if (!rst_n) begin
             out.valid <= 1'b0;
         end else begin
-            if (out.ready) begin
+            if (!out.valid || out.ready) begin
                 out.data  <= next_data;
                 out.keep  <= next_keep;
                 out.last  <= in.last;
@@ -58,6 +58,8 @@ generate if (REGISTER) begin
             end
         end
     end
+
+    assign in.ready = !out.valid || out.ready;
 end else begin
     assign out.data  = next_data;
     assign out.keep  = next_keep;
@@ -65,8 +67,8 @@ end else begin
     assign out.valid = in.valid;
 
     assign counter_out = next_counter;
-end endgenerate
 
-assign in.ready = out.ready;
+    assign in.ready = out.ready;
+end endgenerate
 
 endmodule
