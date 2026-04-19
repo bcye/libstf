@@ -40,7 +40,7 @@ generate if (REGISTER == 1) begin
         if (!rst_n == 1'b1) begin
             out.valid <= 1'b0;
         end else begin
-            if (out.ready) begin
+            if (!out.valid || out.ready) begin
                 out.data  <= data_shifted;
                 out.keep  <= keep_shifted;
                 out.last  <= in.last;
@@ -50,6 +50,8 @@ generate if (REGISTER == 1) begin
             end
         end
     end
+
+    assign in.ready = !out.valid || out.ready;
 end else begin
     assign out.data  = data_shifted;
     assign out.keep  = keep_shifted;
@@ -57,8 +59,8 @@ end else begin
     assign out.valid = in.valid;
 
     assign offset_out = offset_in;
-end endgenerate
 
-assign in.ready = out.ready;
+    assign in.ready = out.ready;
+end endgenerate
 
 endmodule
